@@ -1,0 +1,4 @@
+[data-bs-theme="dark"] :host >>> ngx-skeleton-loader .skeleton-loader {
+    --phoenix-bg-opacity: 1;
+     background-color: rgba(var(--phoenix-body-highlight-bg-rgb), var(--phoenix-bg-opacity)) !important;
+   }

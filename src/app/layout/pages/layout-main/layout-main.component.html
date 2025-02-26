@@ -1,0 +1,32 @@
+<nav class="navbar navbar-vertical navbar-expand-lg" [attr.data-navbar-appearance]="verticalNavApperance">
+    <app-layout-navbar-vertical 
+      [menus]="menus"
+      [isLoading]="isLoading"
+      [isCollapsedVerticalNavbar]="isVerticalNavbarCollapsed"
+      (onClickCollapsed)="onToggleCollapsedNavBar($event)">
+    </app-layout-navbar-vertical>
+  </nav>
+  
+  <nav class="navbar navbar-top fixed-top navbar-slim justify-content-between navbar-expand-lg" 
+      id="navbarComboSlim" data-navbar-top="combo" [attr.data-navbar-appearance]="topNavApperance" data-move-target="#navbarVerticalNav">
+    <app-layout-navbar-top
+    (onTheme)="onThemeChange($event)"
+    [themeName]="themeTopApperance">
+    </app-layout-navbar-top>
+  </nav>  
+  
+  <app-layout-search-box-modal></app-layout-search-box-modal>
+  
+  <div class="content">
+    <router-outlet></router-outlet>
+    <app-layout-theme-settings 
+          (onTopNav)="onTopNavChange($event)" 
+          (onTheme)="onThemeChange($event)" 
+          (onVerticalNav)="onVerticalNavChange($event)"
+          [topNavbarApperance]="topNavApperance"
+          [verticalNavbarApperance]="verticalNavApperance"
+          [themeApperance]="themeApperance"
+    >
+    </app-layout-theme-settings>
+  </div>
+  

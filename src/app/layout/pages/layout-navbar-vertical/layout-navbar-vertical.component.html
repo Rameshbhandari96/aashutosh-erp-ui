@@ -1,0 +1,84 @@
+<div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+    <div class="navbar-vertical-content">
+      <ul class="navbar-nav flex-column" id="navbarVerticalNav">
+        
+        <!-- Show skeleton loader while menus are loading -->
+        <ng-container *ngIf="isLoading; else loadedMenus">
+          <li class="nav-item p-3">
+            <ngx-skeleton-loader count="10" [theme]="{ height: '20px', marginBottom: '15px' }"></ngx-skeleton-loader>
+          </li>
+        </ng-container>
+  
+        <ng-template #loadedMenus>
+          <!-- Loop through each module in navBarList -->
+          <li class="nav-item" *ngFor="let group of menus">
+            <!-- Module Name and Divider -->
+            <p class="navbar-vertical-label">{{ group.group }}</p>
+            <hr class="navbar-vertical-line" />
+  
+            <!-- Loop through each root component in the module -->
+            <ng-container *ngFor="let rootMenu of group.menus">
+              <!-- Root Menu and its Submenus (if any) -->
+              <ng-container *ngTemplateOutlet="menuLinkTemplate; context: { menuItem: rootMenu, isRoot: true }"></ng-container>
+  
+              <!-- Child Menu (Level 2 and Beyond) -->
+              <ul class="nav collapse parent" 
+                  [attr.id]="rootMenu.name | lowercase | replace: ' ' : '-'"
+                  data-bs-parent="#navbarVerticalCollapse">
+                
+                <ng-container *ngTemplateOutlet="renderMenuItems; context: { menuItems: rootMenu.subMenus }"></ng-container>
+                
+              </ul>
+            </ng-container>
+          </li>
+        </ng-template>
+  
+        <!-- Recursive Template for Handling Submenus (Third, Fourth levels, etc.) -->
+        <ng-template #renderMenuItems let-menuItems="menuItems">
+          <li class="nav-item" *ngFor="let menuItem of menuItems">
+            <!-- Recursively handle menu items -->
+            <ng-container *ngTemplateOutlet="menuLinkTemplate; context: { menuItem: menuItem, isRoot: false }"></ng-container>
+  
+            <!-- Submenu -->
+            <ul class="nav collapse parent" 
+                *ngIf="menuItem.subMenus?.length > 0"
+                [attr.id]="menuItem.name | lowercase | replace: ' ' : '-'">
+              <ng-container *ngTemplateOutlet="renderMenuItems; context: { menuItems: menuItem.subMenus }"></ng-container>
+            </ul>
+          </li>
+        </ng-template>
+  
+        <!-- Template for Rendering Menu Links -->
+        <ng-template #menuLinkTemplate let-menuItem="menuItem" let-isRoot="isRoot">
+          <a class="nav-link dropdown-indicator label-1"
+            [attr.href]="menuItem.subMenus?.length > 0 ? '#' + (menuItem.name | lowercase | replace: ' ' : '-') : ('/' + menuItem.module + (menuItem.path ? '/' + menuItem.path : ''))"
+             role="button"  
+             [attr.aria-expanded]="false"
+             [attr.aria-controls]="menuItem.name | lowercase | replace: ' ' : '-'"
+             [attr.data-bs-toggle]="menuItem.subMenus?.length > 0 ? 'collapse' : null">
+            
+            <div class="d-flex align-items-center">
+              <div *ngIf="menuItem.subMenus?.length > 0" class="dropdown-indicator-icon">
+                <span class="fas fa-caret-right"></span>
+              </div>
+              <span class="nav-link-icon">
+                <span style="height: 1.3em; width: 1.3em;" [attr.data-feather]="menuItem.iconClass ? menuItem.iconClass : null"></span>
+              </span>
+              <span class="nav-link-text">{{ menuItem.name }}</span>
+            </div>
+          </a>
+        </ng-template>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Footer for collapsed navbar -->
+  <div class="navbar-vertical-footer">
+    <button (click)="onClickCollapsedNavbar()" 
+            class="btn navbar-vertical-toggle border-0 fw-semibold w-100 d-flex align-items-center">
+      <span class="fas fa-chevron-left fs-8"></span>
+      <span class="fas fa-chevron-right fs-8"></span>
+      <span class="navbar-vertical-footer-text ms-2">Collapsed View</span>
+    </button>
+  </div>
+  
